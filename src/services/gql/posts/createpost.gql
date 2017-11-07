@@ -1,0 +1,8 @@
+#import "./postparts.gql"
+
+mutation ($post: BlogPostInput!){
+  createPost(post: $post)
+  {
+    ...PostParts
+  }
+}

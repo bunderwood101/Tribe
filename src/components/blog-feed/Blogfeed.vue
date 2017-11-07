@@ -11,8 +11,10 @@
 
 <script>
 // import Velocity from 'velocity-animate'
+
 import BlogPost from '../blog-post/Blogpost.vue'
-import gql from 'graphql-tag'
+// import gql from 'graphql-tag'
+import GETPOSTS_QUERY from '../../services/gql/posts/getposts.gql'
 
 export default {
   name: 'BlogFeed',
@@ -28,14 +30,7 @@ export default {
   },
   apollo: {
     posts: {
-      query: gql`{
-        posts {
-          _id
-          title
-          content
-          author
-        }
-      }`,
+      query: GETPOSTS_QUERY,
       // loadingKey will be incremented when the query is loading
       // and decremented when it no longer is.
       loadingKey: 'loadingQueriesCount',

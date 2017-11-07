@@ -26,7 +26,8 @@
 </template>
 
 <script>
-import gql from 'graphql-tag'
+import CREATEPOST_MUTATION from '../../services/gql/posts/createpost.gql'
+import GETPOSTS_QUERY from '../../services/gql/posts/getposts.gql'
 
 export default {
   name: 'add-post',
@@ -49,15 +50,7 @@ export default {
       // this.form.title = ''
       // this.form.content = ''
       this.$apollo.mutate({
-        mutation: gql`mutation ($post: BlogPostInput!){
-          createPost(post: $post)
-          {
-            _id,
-            title,
-            content,
-            author
-          }
-        }`,
+        mutation: CREATEPOST_MUTATION,
         variables: {
           post: newPost
         },
@@ -69,26 +62,12 @@ export default {
           // Read the data from our cache for this query.
           // TODO store these queries as .gql files so they can be easily referenced
           const data = store.readQuery({
-            query: gql`{
-              posts {
-                _id
-                title
-                content
-                author
-              }
-            }`
+            query: GETPOSTS_QUERY
           })
           // Add our tag from the mutation to the end
           data.posts.push(createPost)
           // Write our data back to the cache.
-          store.writeQuery({ query: gql`{
-            posts {
-              _id
-              title
-              content
-              author
-              }
-            }`,
+          store.writeQuery({ query: GETPOSTS_QUERY,
             data
           })
         },
