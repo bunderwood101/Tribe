@@ -67,23 +67,21 @@ export default {
           // Add our tag from the mutation to the end
           data.posts.push(createPost)
           // Write our data back to the cache.
-          store.writeQuery({ query: GETPOSTS_QUERY,
-            data
-          })
-        },
+          store.writeQuery({ query: GETPOSTS_QUERY, data })
+        }
         // Optimistic UI
         // Will be treated as a 'fake' result as soon as the request is made
         // so that the UI can react quickly
         // TODO not currently working
-        optimisticResponse: {
-          __typename: 'Mutation',
-          addPost: {
-            __typename: 'Post',
-            id: -1,
-            title: newPost.title,
-            content: newPost.content
-          }
-        }
+        // optimisticResponse: {
+        //   __typename: 'Mutation',
+        //   addPost: {
+        //     __typename: 'Post',
+        //     id: -1,
+        //     title: newPost.title,
+        //     content: newPost.content
+        //   }
+        // }
       }).then((data) => {
         // Result
         this.dialogVisible = false
