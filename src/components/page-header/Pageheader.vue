@@ -1,6 +1,7 @@
 <template>
   <header>
     <nav>
+    <login></login>
     <add-post></add-post>
     </nav>
   </header>
@@ -8,11 +9,13 @@
 
 <script>
 import addPost from '../add-post/Addpost.vue'
+import login from '../login/Login.vue'
 
 export default {
   name: 'PageHeader',
   components: {
-    addPost
+    addPost,
+    login
   },
   data () {
     return {
