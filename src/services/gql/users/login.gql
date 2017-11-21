@@ -1,5 +1,6 @@
 mutation ($user: UserLoginInput!) {
   login(user:$user){
     email
+    jwt
   }
 }

@@ -27,11 +27,10 @@
     <el-button v-else class="button-new-tag" size="small" @click="showInput">+ add Hasthag</el-button>
     </el-form-item>
     <el-form-item>
-      <!-- <i class="el-icon-circle-check check"></i>
-      <i class="el-icon-circle-close remove"></i> -->
+      <i class="el-icon-circle-check check"></i>
+      <i class="el-icon-circle-close remove"></i>
       <el-carousel :autoplay="false" type="card" height="450px">
         <el-carousel-item v-for="tweet in tweets" :key="tweet.id" v-bind:id="tweet.divid">
-          <div class="carousel-image" v-bind:style="{ backgroundImage: 'url(' + tweet.imageURL + ')' }"></div>
         </el-carousel-item>
       </el-carousel>
     </el-form-item>
@@ -51,6 +50,24 @@ import CREATEPOST_MUTATION from '../../services/gql/posts/createpost.gql'
 import GETPOSTS_QUERY from '../../services/gql/posts/getposts.gql'
 import GETTWEETS_QUERY from '../../services/gql/twitter/gettweets.gql'
 
+/*eslint-disable */
+// async load the Twitter for Websites js
+window.twttr = (function (d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0]
+  var t = window.twttr || {}
+  if (d.getElementById(id)) return t
+  js = d.createElement(s)
+  js.id = id
+  js.src = 'https://platform.twitter.com/widgets.js'
+  fjs.parentNode.insertBefore(js, fjs)
+  t._e = []
+  t.ready = function (f) {
+    t._e.push(f)
+  }
+  return t
+}(document, 'script', 'twitter-wjs'))
+/*eslint-enable */
+
 export default {
   name: 'add-post',
   data () {
@@ -65,8 +82,7 @@ export default {
       },
       tweets: [{
         id_str: '',
-        hashtags: '',
-        imageURL: 'https://media4.s-nbcnews.com/j/newscms/2016_36/1685951/ss-160826-twip-05_8cf6d4cb83758449fd400c7c3d71aa1f.nbcnews-ux-2880-1000.jpg'
+        hashtags: ''
       }]
     }
   },
@@ -115,6 +131,9 @@ export default {
     },
 
     handleSpaces () {
+      window.twttr.widgets.createTweet('931933489666183168', document.getElementById('first-tweet'))
+      window.twttr.widgets.createTweet('931574654988423168', document.getElementById('second-tweet'))
+
       // cancel space key press
       if (event.keyCode === 32) {
         event.preventDefault()
@@ -219,8 +238,6 @@ export default {
 }
 i.check{color:#67C23A}
 i.remove{color:#FA5555}
-
-.carousel-image{height:300px; background-size: cover;}
 </style>
 
 <docs>

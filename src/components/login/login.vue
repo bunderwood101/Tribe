@@ -50,6 +50,8 @@ export default {
         }
       }).then((data) => {
         // Result
+        console.log(data.data.login.jwt)
+        localStorage.setItem('token', data.data.login.jwt)
         this.dialogVisible = false
         this.form.username = ''
         this.form.password = ''

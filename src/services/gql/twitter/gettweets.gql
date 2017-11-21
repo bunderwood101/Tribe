@@ -1,0 +1,7 @@
+query GetTweets($searchArgs: String!,$count: Int)
+{
+  searchtwitter(searchArgs:$searchArgs, count: $count) {
+    id_str
+    hashtags
+  }
+}

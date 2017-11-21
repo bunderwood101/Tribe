@@ -25,6 +25,7 @@
     "graphql": "^0.11.7",
     "graphql-tag": "^2.5.0",
     "jsonwebtoken": "^8.1.0",
+    "scriptjs": "^2.5.8",
     "vue": "^2.4.2",
     "vue-apollo": "^3.0.0-alpha.1",
     "vue-router": "^2.7.0"
