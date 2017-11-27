@@ -1,6 +1,13 @@
 fragment PostParts on Post {
-  _id
   title
-  content
+  date
   author
+  content {
+    contentType
+    content
+  }
+  published
+  featured
+  colspan
+  rowpspan
 }
