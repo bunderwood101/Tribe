@@ -1,39 +1,22 @@
 <template>
   <span>
   <el-button type="text"  @click="dialogVisible = true">add post</el-button>
-  <el-dialog
-  title='add post component'
-  :visible.sync="dialogVisible"
-  width="30%"
-  :before-close="handleClose">
-  <el-form ref="form" :model="form">
+  <el-dialog title='add post component' :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+  <el-form ref="form" v-model="post">
+    <el-select v-model="post.postType" placeholder="Select">
+      <el-option v-for="item in postTypes" :key="item.value" :label="item.value" :value="item.component">
+      </el-option>
+    </el-select>
+    <component v-on:updatePostContent="updatePostContent" v-bind:is="this.post.postType"></component>
     <el-form-item label="Title">
-      <el-input placeholder="Title" v-model="form.title"></el-input>
+      <el-input placeholder="Title" v-model="post.title"></el-input>
     </el-form-item>
     <el-form-item label="Content">
-      <el-input type="textarea" :rows="4" placeholder="Content" v-model="form.content"></el-input>
-    </el-form-item>
-    <el-form-item label="Primary Hashtag">
-      <el-tag
-        :key="tag"
-        v-for="tag in form.primaryHashtag"
-        closable
-        :disable-transitions="false"
-        @close="handleCloseTag(tag)">
-        {{tag}}
-      </el-tag>
-      <el-input class="input-new-tag" v-if="form.inputVisible" v-model="form.inputValue" ref="saveTagInput" @blur="handleInputConfirm" @keyup.enter.native="handleInputConfirm" @keydown.space.native="handleSpaces">
-    </el-input>
-    <el-button v-else class="button-new-tag" size="small" @click="showInput">+ add Hasthag</el-button>
+      <!-- <el-input type="textarea" :rows="4" placeholder="Content" v-model="post.content"></el-input> -->
     </el-form-item>
     <el-form-item>
       <!-- <i class="el-icon-circle-check check"></i>
       <i class="el-icon-circle-close remove"></i> -->
-      <el-carousel :autoplay="false" type="card" height="450px">
-        <el-carousel-item v-for="tweet in tweets" :key="tweet.id" v-bind:id="tweet.divid">
-          <div class="carousel-image" v-bind:style="{ backgroundImage: 'url(' + tweet.imageURL + ')' }"></div>
-        </el-carousel-item>
-      </el-carousel>
     </el-form-item>
     <el-form-item>
       <el-button @click="dialogVisible = false">Cancel</el-button>
@@ -47,92 +30,55 @@
 </template>
 
 <script>
+import postTypeAd from './post-types/ad.vue'
+import postTypeImage from './post-types/image.vue'
+import postTypeTweet from './post-types/tweet.vue'
+
 import CREATEPOST_MUTATION from '../../services/gql/posts/createpost.gql'
 import GETPOSTS_QUERY from '../../services/gql/posts/getposts.gql'
-import GETTWEETS_QUERY from '../../services/gql/twitter/gettweets.gql'
 
 export default {
   name: 'add-post',
+  components: {
+    postTypeAd, postTypeImage, postTypeTweet
+  },
   data () {
     return {
+      postTypes: [
+        {value: 'Ad', component: 'postTypeAd'},
+        {value: 'Article', component: 'Article'},
+        {value: 'Image', component: 'postTypeImage'},
+        {value: 'Tweet', component: 'postTypeTweet'},
+        {value: 'Video', component: 'Video'}
+
+      ],
       dialogVisible: false,
-      form: {
-        title: '',
-        content: '',
-        primaryHashtag: [],
-        inputVisible: false,
-        inputValue: '#'
-      },
-      tweets: [{
-        id_str: '',
-        hashtags: '',
-        imageURL: 'https://media4.s-nbcnews.com/j/newscms/2016_36/1685951/ss-160826-twip-05_8cf6d4cb83758449fd400c7c3d71aa1f.nbcnews-ux-2880-1000.jpg'
-      }]
-    }
-  },
-  watch: {
-    tweets: function () {
-    },
-    'form.primaryHashtag': {
-      handler: function (val, oldVal) {
-        console.log(this.form.primaryHashtag[0])
+      post: {
+        title: 'test',
+        content: [{
+          contentType: '',
+          content: ''
+        }],
+        postType: ''
       }
     }
   },
-  apollo: {
-    tweets: {
-      query: GETTWEETS_QUERY,
-      variables () {
-        return {
-          searchArgs: this.form.primaryHashtag[0],
-          count: 10
-        }
-      },
-      loadingKey: 'loadingQueriesCount',
-      watchLoading (isLoading, countModifier) {
-      // isLoading is a boolean
-      // countModifier is either 1 or -1
-      },
-      // Optional result hook
-      result ({ data, loader, networkStatus }) {
-        console.log('results loaded')
-      },
-      // Error handling
-      error (error) {
-        console.error('We\'ve got an error!', error)
+  watch: {
+    'post.primaryHashtag': {
+      handler: function (val, oldVal) {
+        console.log(this.post.primaryHashtag[0])
       }
     }
   },
   methods: {
-    handleCloseTag (tag) {
-      this.form.primaryHashtag.splice(this.form.primaryHashtag.indexOf(tag), 1)
-    },
-    showInput () {
-      this.form.inputVisible = true
-      this.$nextTick(_ => {
-        this.$refs.saveTagInput.$refs.input.focus()
-      })
-    },
-
-    handleSpaces () {
-      // cancel space key press
-      if (event.keyCode === 32) {
-        event.preventDefault()
-      }
-    },
-    handleInputConfirm () {
-      // being called twice, should resolve this
-      let inputValue = this.form.inputValue
-      if (inputValue && inputValue !== '#') {
-        this.form.primaryHashtag.push(inputValue)
-      }
-      this.form.inputVisible = false
-      this.form.inputValue = '#'
+    updatePostContent (data) {
+      console.log('update post content with', data)
+      this.post.content = data
     },
     addPost () {
       const newPost = {
-        title: this.form.title,
-        content: this.form.content
+        title: this.post.title,
+        content: this.post.content
       }
       this.$apollo.mutate({
         mutation: CREATEPOST_MUTATION,
@@ -170,8 +116,8 @@ export default {
       }).then((data) => {
         // Result
         this.dialogVisible = false
-        this.form.title = ''
-        this.form.content = ''
+        this.post.title = ''
+        this.post.content = ''
       }).catch((error) => {
         // Error
         console.error(error)
@@ -179,7 +125,7 @@ export default {
     },
     handleClose (done) {
       // only show dialog if text has been entered into form
-      if (this.form.title || this.form.content) {
+      if (this.post.title || this.post.content) {
         this.$confirm('Are you sure to close this dialog?')
         .then(_ => {
           done()
